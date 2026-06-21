@@ -87,7 +87,7 @@ end
 tatolib.write = function(Text, CursorX, CursorY)
 
     if not tatolib.Monitor then
-        print("Unable to call topbarPrint because Monitor is either nil or wasn't passed into function.")
+        print("Unable to call write because Monitor is either nil or wasn't passed into function.")
         return
     end
 
@@ -97,12 +97,27 @@ tatolib.write = function(Text, CursorX, CursorY)
         return
     end
 
-    Monitor.clear()
+    CursorX = CursorX or 1
+    CursorY = CursorY or 2
 
     tatolib.topbarPrint(tatolib.CurrentTopbarMeta.Text,tatolib.CurrentTopbarMeta.Config)
-    Monitor.setCursorPos(CursorX or 1, CursorY or 2)
+    Monitor.setCursorPos(CursorX, CursorY)
 
     Monitor.write(Text)
+
+end
+
+tatolib.clear = function()
+
+    if not tatolib.Monitor then
+        print("Unable to call clear because Monitor is either nil or wasn't passed into function.")
+        return
+    end
+
+    local Monitor = tatolib.Monitor
+
+    Monitor.clear()
+    tatolib.topbarPrint(tatolib.CurrentTopbarMeta.Text,tatolib.CurrentTopbarMeta.Config)
 
 end
 
