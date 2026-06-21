@@ -23,76 +23,71 @@ local function getChestSize(Chest)
 
 end
 
--- Creates a grey topbar at the top of the passed monitor with the Text argument 
-storageUtils.checkChests = function()
-  
-    local splitSize = storageUtils.Configuration.ChestIndexSplits
-    local totalSpace = 0
-    local startTime = os.time(os.date("!*t"))
+-- // Clean up the checkChests function 
+storageUtils.getContainerSpace = function()
 
-    -- // split chests into 2 chunks that we read at the same time
-    local splitChests = { {},{} }
+    -- // constants
+    local ContainerIndexSplits = storageUtils.Configuration.ChestIndexSplits
+    local Containers = { peripheral.find("inventory") }
 
-    local chunksProcessed = 1
-    local totalContainers = 0
+    -- // variables
+    local TotalContainerSpace = 0
+    local CheckStartTime = os.time(os.date("!*t"))
 
-    local getTotalSizeFuncs = {}
+    -- // we will store every chunk of chests here
+    local ContainerChunks = {}
 
+    local ProcessedChunks = 1
+    local TotalContainers = 0
+    local FunctionQueue = {}
+
+    -- // Clear the screen
     TatoLib.clear()
-    print(startTime)
 
-    local function addToTotalSize(chest)
-        
+    -- // Set-up local functions
+    local function getSizeOf(chest)
         if not chest then
-            TatoLib.write("No chest found!",1,3)
-            return            
+            print("ERROR: No chest argument passed into function.")
+            return
         end
-
-        -- // we've will calculate the max amount of items this chest can hold
         local ChestSize = getChestSize(chest)
-
-        totalSpace = totalSpace + ChestSize
-
+        TotalContainerSpace = TotalContainerSpace + ChestSize     
     end
 
-    local function addChestsTo(tableToAdd,chunk)
-        for i=1,math.floor(#chunk / splitSize) do
-            table.insert(tableToAdd,chunk[i])
-            table.remove(chunk,i)
+    local function SplitChests(TableToAdd, Chunk)
+        local SplitSize = math.floor(#Chunk / ContainerIndexSplits) 
+        for i=1,SplitSize do
+            table.insert(TableToAdd,Chunk[i])
+            table.remove(Chunk,i)
         end
     end
-
-    local function getTotalSizeFromChunk()
-
-        for Index, Chest in pairs(splitChests[chunksProcessed]) do
-            addToTotalSize(Chest)
+    
+    local function GetSizeOfChunk()
+        for _, Chest in pairs(ContainerChunks[ProcessedChunks]) do
+            getSizeOf(Chest)
         end
-
-        chunksProcessed = chunksProcessed + 1
+        
+        ProcessedChunks = ProcessedChunks + 1
     end
 
-    local chests = { peripheral.find("inventory") }
-    TatoLib.write("Calculating total chest space... ",1,3)
+    TatoLib.write("Fetching connected containers...",1,3)
+    TotalContainers = #Containers
 
-    totalContainers = #chests
-
-    for i=1,splitSize do
-        splitChests[i] = {}
-        table.insert(getTotalSizeFuncs,getTotalSizeFromChunk)
-        addChestsTo(splitChests[i],chests)
+    for i=1,ContainerIndexSplits do
+        ContainerChunks[i] = {}
+        table.insert(FunctionQueue,GetSizeOfChunk)
+        SplitChests(ContainerChunks[i],Containers)
     end
 
-    parallel.waitForAll(table.unpack(getTotalSizeFuncs))
+    parallel.waitForAll( table.unpack(FunctionQueue) )
 
-    local endTime = os.time(os.date("!*t"))
-
-    print(endTime)
+    -- // clear everything and print results
+    local TimeTaken = os.time(os.date("!*t")) - CheckStartTime
 
     TatoLib.clear()
 
-    TatoLib.write("Total Space: " .. totalSpace, 1,3)
-    TatoLib.write("Took " .. endTime - startTime .." second(s) for " .. totalContainers .. " containers.",1,4)
-    
+    TatoLib.write("Total Space: " .. TotalContainerSpace, 1,3)
+    TatoLib.write("Took " .. TimeTaken .." second(s) for " .. TotalContainers .. " containers.",1,4)
 
 end
 
