@@ -38,6 +38,7 @@ storageUtils.checkChests = function()
 
     local getTotalSizeFuncs = {}
 
+    TatoLib.clear()
     print(startTime)
 
     local function addToTotalSize(chest)
@@ -87,8 +88,10 @@ storageUtils.checkChests = function()
 
     print(endTime)
 
+    TatoLib.clear()
+
     TatoLib.write("Total Space: " .. totalSpace, 1,3)
-    TatoLib.write("Took " .. endTime - startTime .." second(s) for " .. totalContainers .. " containers.",1,4    )
+    TatoLib.write("Took " .. endTime - startTime .." second(s) for " .. totalContainers .. " containers.",1,4)
     
 
 end
