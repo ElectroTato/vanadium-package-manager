@@ -15,5 +15,4 @@ end
 TatoLib.Init(Monitor)
 TatoLib.topbarPrint("Inventory Manager", {Height = 1})
 
-StorageUtils.checkChests()
-
+StorageUtils.getContainerSpace()
