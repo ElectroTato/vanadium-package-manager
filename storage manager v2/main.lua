@@ -80,9 +80,6 @@ local function getItem(itemName, count)
 
     local items = fetchItem(itemName)
 
-    local tries = 0
-    local amountLeft = count
-
     if not items then
         return
     end
@@ -90,6 +87,10 @@ local function getItem(itemName, count)
     if not count then
         count = items.TotalCount
     end
+
+    local tries = 0
+    local amountLeft = count
+
 
     local function getItem()
 
@@ -118,9 +119,15 @@ local function getItem(itemName, count)
 
         local amountPulled = randomItem.Container.pushItems( peripheral.getName(pickupBarrel) , randomItem.Slot, amountLeft )
 
+        if not amountPulled then
+            goto continue
+        end
+
         amountLeft = amountLeft - amountPulled
         print( ("Grabbed %d, %d left"):format(amountPulled,amountLeft) )
         table.remove(items,randomItem.Index)
+
+        ::continue::
 
     end
 
