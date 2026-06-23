@@ -1,0 +1,19 @@
+{
+    "storage": {
+        "author": "ElectroTato",
+        "version": 1,
+
+        "mainfile": "https://raw.githubusercontent.com/ElectroTato/vanadium-package-manager/refs/heads/main/src/storageManager.lua",
+        "dependencies": {
+            "printc": true
+        }
+    },
+
+    "printc": {
+        "author": "ElectroTato",
+        "version": 1,
+
+        "mainfile": "https://raw.githubusercontent.com/ElectroTato/vanadium-package-manager/refs/heads/main/src/printc.lua",
+        "dependencies": {}
+    }
+}
