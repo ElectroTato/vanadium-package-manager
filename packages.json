@@ -1,7 +1,7 @@
 {
     "storage": {
         "author": "ElectroTato",
-        "version": 1,
+        "version": 2,
 
         "mainfile": "https://raw.githubusercontent.com/ElectroTato/vanadium-package-manager/refs/heads/main/src/storageManager.lua",
         "dependencies": {
